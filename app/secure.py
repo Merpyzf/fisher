@@ -5,4 +5,6 @@
 @contact: merpyzf@qq.com
 @software: PyCharm
 """
-DEBUG = False
+DEBUG = True
+# 数据库连接uri
+SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:wangke0310@localhost:3306/fisher'
