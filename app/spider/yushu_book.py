@@ -13,23 +13,34 @@ from app.libs.myhttp import HTTP
 class YuShuBook:
     isbn_url = 'http://t.yushu.im/v2/book/isbn/{q}'
     keyword_url = 'http://t.yushu.im/v2/book/search?q={q}&count={count}&start={start}'
-    per_page = 15
 
-    @classmethod
-    def search_by_key(cls, keyword, page):
-        keyword_url = cls.keyword_url.format(q=keyword, count=current_app.config['PER_PAGE'],
-                                             start=cls.calculate_start(page))
+    def __init__(self):
+        self.total = 0
+        self.books = []
+
+    def search_by_key(self, keyword, page):
+        keyword_url = self.keyword_url.format(q=keyword, count=current_app.config['PER_PAGE'],
+                                              start=self.calculate_start(page))
         result = HTTP.get(keyword_url)
-        return result
+        # 将获取到的数据存储到对象的实例对象中而不是直接返回给外部调用处
+        self.__fill_collection(result)
 
-    @classmethod
-    def search_by_isbn(cls, q):
-        isbn_url = cls.isbn_url.format(q=q)
+    def search_by_isbn(self, q):
+        isbn_url = self.isbn_url.format(q=q)
         print(isbn_url)
         result = HTTP.get(isbn_url)
-        return result
+        #  将获取到的数据存储到对象的实例对象中而不是直接返回给外部调用处
+        self.__fill_single(result)
 
-    @staticmethod
-    def calculate_start(page):
+    def __fill_single(self, data):
+        if data:
+            self.total = 1
+            self.books.append(data)
+
+    def __fill_collection(self, data):
+        self.total = data['total']
+        self.books = data['books']
+
+    def calculate_start(self, page):
         start = (page - 1) * current_app.config['PER_PAGE']
         return start

@@ -11,11 +11,13 @@ from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
 from app.spider.yushu_book import YuShuBook
 from app.web import web
-from app.view_models.book import BookViewModel
+from app.view_models.book import BookViewModel, BookCollection
+
 
 @web.route('/book/search')
 def search():
     """
+    用于对书籍进行搜索的视图函数
     :param q: 图书搜索关键字
     :param page:  页数
     :return:
@@ -26,12 +28,13 @@ def search():
         q = form.q.data.strip()
         page = form.page.data
         isbn_or_key = is_isbn_or_key(q)
+        books = BookCollection()
+        yushuBook = YuShuBook()
         if isbn_or_key == 'key':
-            result = YuShuBook.search_by_key(q, page)
-            result = BookViewModel.package_collection(result, q)
+            yushuBook.search_by_key(keyword=q, page=page)
         else:
-            result = YuShuBook.search_by_isbn(q)
-            result = BookViewModel.package_single(result, q)
-        return jsonify(result)
+            yushuBook.search_by_isbn(q)
+        books.fill(yushuBook, q)
+        return jsonify(books)
     else:
         return jsonify(form.errors)
