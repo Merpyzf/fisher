@@ -11,7 +11,7 @@ from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
 from app.spider.yushu_book import YuShuBook
 from app.web import web
-
+from app.view_models.book import BookViewModel
 
 @web.route('/book/search')
 def search():
@@ -28,8 +28,10 @@ def search():
         isbn_or_key = is_isbn_or_key(q)
         if isbn_or_key == 'key':
             result = YuShuBook.search_by_key(q, page)
+            result = BookViewModel.package_collection(result, q)
         else:
             result = YuShuBook.search_by_isbn(q)
+            result = BookViewModel.package_single(result, q)
         return jsonify(result)
     else:
         return jsonify(form.errors)

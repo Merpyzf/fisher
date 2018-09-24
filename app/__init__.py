@@ -16,8 +16,10 @@ def create_app():
     register_blueprint(app)
     # 注册数据库
     db.init_app(app)
-    # 生成表
-    db.create_all(app=app)
+    with app.app_context():
+        # 生成表
+        db.create_all()
+    # db.create_all(app)
     return app
 
 def register_blueprint(app):

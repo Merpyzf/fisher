@@ -6,20 +6,26 @@
 @software: PyCharm
 """
 
+from werkzeug.local import LocalStack
+import threading
+import time
+s = LocalStack()
+s.push('1')
+s.push('2')
 
-class SQLManager:
-    def __enter__(self):
-        print('__enter__方法执行了')
-        return self
+def worker():
+    s.push('3')
+    print(s)
+    print(s.top)
+    s.pop()
+    print(s.top)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        print('__exit__方法执行了，进行资源释放')
 
-    def touch_except(self):
-        print('生成一个除0异常')
-        a = 1 / 0
 
-if __name__ == '__main__':
+t = threading.Thread(target=worker)
+t.start()
+time.sleep(1)
 
-    with SQLManager() as manager:
-        print("hihihi")
+print("main --> "+s.top)
+
+
