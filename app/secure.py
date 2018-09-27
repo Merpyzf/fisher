@@ -8,3 +8,4 @@
 DEBUG = True
 # 数据库连接uri
 SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:wangke0310@localhost:3306/fisher'
+SECRET_KEY = 'qwsaxcdfergbnhtyjumkliq123sw32'

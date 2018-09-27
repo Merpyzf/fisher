@@ -7,7 +7,7 @@
 """
 import json
 
-from flask import jsonify, request
+from flask import jsonify, request, render_template
 
 from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
@@ -41,3 +41,12 @@ def search():
         return json.dumps(books, default=lambda o: o.__dict__)
     else:
         return jsonify(form.errors)
+
+
+@web.route('/test')
+def test():
+    r = {
+        'name': '春水碧于天',
+        'age': '18'
+    }
+    return render_template('test_extend.html', data=r)
