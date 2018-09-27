@@ -10,7 +10,9 @@ from app.models.book import db
 
 
 def create_app():
-    app = Flask(__name__)
+    # __name__ 决定了项目的根目录
+    # 默认静态资源存放的文件夹为应用根目录下的static目录下，可以通过传入静态文件夹路径的方式来自定义的指定静态资源文件夹放置的位置
+    app = Flask(__name__, static_folder='static', static_url_path='/s')
     app.config.from_object('app.secure')
     app.config.from_object('app.setting')
     register_blueprint(app)

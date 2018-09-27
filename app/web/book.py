@@ -5,6 +5,8 @@
 @contact: merpyzf@qq.com
 @software: PyCharm
 """
+import json
+
 from flask import jsonify, request
 
 from app.forms.book import SearchForm
@@ -30,11 +32,12 @@ def search():
         isbn_or_key = is_isbn_or_key(q)
         books = BookCollection()
         yushuBook = YuShuBook()
+        # Python建议在合适的位置使用空行来分割代码片段，使得代码变得更加易读
         if isbn_or_key == 'key':
             yushuBook.search_by_key(keyword=q, page=page)
         else:
             yushuBook.search_by_isbn(q)
         books.fill(yushuBook, q)
-        return jsonify(books)
+        return json.dumps(books, default=lambda o: o.__dict__)
     else:
         return jsonify(form.errors)
