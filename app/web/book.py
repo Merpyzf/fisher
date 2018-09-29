@@ -7,7 +7,7 @@
 """
 import json
 
-from flask import jsonify, request, render_template
+from flask import jsonify, request, render_template, flash
 
 from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
@@ -25,12 +25,12 @@ def search():
     :return:
     """
     form = SearchForm(request.args)
+    books = BookCollection()
     if form.validate():
         # 调用strip()函数去除前后的空格
         q = form.q.data.strip()
         page = form.page.data
         isbn_or_key = is_isbn_or_key(q)
-        books = BookCollection()
         yushuBook = YuShuBook()
         # Python建议在合适的位置使用空行来分割代码片段，使得代码变得更加易读
         if isbn_or_key == 'key':
@@ -38,9 +38,9 @@ def search():
         else:
             yushuBook.search_by_isbn(q)
         books.fill(yushuBook, q)
-        return json.dumps(books, default=lambda o: o.__dict__)
     else:
-        return jsonify(form.errors)
+        flash("搜索的关键字不符合要求，请重新输入关键字")
+    return render_template('search_result.html', books=books)
 
 
 @web.route('/test')

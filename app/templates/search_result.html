@@ -18,7 +18,7 @@
     <hr>
     {% for book in books.books %}
         <div class="row col-padding">
-            <a href="{{ url_for('web.book_detail', isbn=book.isbn) }}" class="">
+{#            <a href="{{ url_for('web.book_detail', isbn=book.isbn) }}" class="">#}
                 <div class="col-md-2">
                     <img class="book-img-small shadow" src="{{ book.image }}">
                 </div>
