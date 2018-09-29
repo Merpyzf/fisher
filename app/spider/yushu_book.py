@@ -44,3 +44,8 @@ class YuShuBook:
     def calculate_start(self, page):
         start = (page - 1) * current_app.config['PER_PAGE']
         return start
+
+    @property
+    def first(self):
+        # 封装一个first方法后调用者无需知道第一本书在集合中的位置也可以方便调用
+        return self.books[0] if len(self.books) >= 0 else None

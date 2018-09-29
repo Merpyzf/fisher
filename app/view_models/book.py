@@ -20,6 +20,7 @@ class BookViewModel:
         self.image = book['image']
         self.price = book['price']
         self.summary = book['summary']
+        self.isbn = book['isbn']
         self.pages = book['pages']
 
     @property

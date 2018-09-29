@@ -50,3 +50,10 @@ def test():
         'age': '18'
     }
     return render_template('test_extend.html', data=r)
+
+
+@web.route('/book/<isbn>/book_detail')
+def book_detail(isbn):
+    yushu_book = YuShuBook()
+    yushu_book.search_by_isbn(isbn)
+    return render_template("book_detail.html", book=yushu_book.first, wishes=[], gifts=[])
