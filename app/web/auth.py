@@ -1,3 +1,5 @@
+from flask import render_template
+
 from . import web
 
 __author__ = '七月'
@@ -5,8 +7,7 @@ __author__ = '七月'
 
 @web.route('/register', methods=['GET', 'POST'])
 def register():
-    pass
-
+    return render_template('auth/register.html',form={'data':{}})
 
 @web.route('/login', methods=['GET', 'POST'])
 def login():
