@@ -6,8 +6,10 @@
 @software: PyCharm
 """
 from flask import Flask
+from flask_login import LoginManager
 from app.models.base import db
 
+login_manager = LoginManager()
 
 def create_app():
     # __name__ 决定了项目的根目录
@@ -16,6 +18,8 @@ def create_app():
     app.config.from_object('app.secure')
     app.config.from_object('app.setting')
     register_blueprint(app)
+    # 将插件注册到核心对象中
+    login_manager.init_app(app)
     # 注册数据库
     db.init_app(app)
     with app.app_context():
