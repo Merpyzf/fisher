@@ -34,7 +34,7 @@ def login():
             login_user(user, remember=True)
             next = request.args.get('next')
             # 默认的next后边跟的视图的地址时以/开头的，增加一些判断为了避免重定向攻击
-            if not next and not next.startswith('/'):
+            if not next or not next.startswith('/'):
                 # 如果不存在next参数值或者next后面的参数值被手动修改了则强制跳转到应用的首页
                 next = url_for('web.index')
             return redirect(next)
