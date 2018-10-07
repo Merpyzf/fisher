@@ -20,6 +20,10 @@ def create_app():
     register_blueprint(app)
     # 将插件注册到核心对象中
     login_manager.init_app(app)
+    # 告知login_manage视图函数位置
+    login_manager.login_view = 'web.login'
+    # 当未登录状态时跳转到登录页面的flash的消息提示
+    login_manager.login_message = '请先登录或注册'
     # 注册数据库
     db.init_app(app)
     with app.app_context():
