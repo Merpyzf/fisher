@@ -8,6 +8,7 @@
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
 from sqlalchemy import Column, Integer, SmallInteger
 from contextlib import contextmanager
+from datetime import datetime
 class SQLAlchemy(_SQLAlchemy):
     @contextmanager
     def auto_commit(self):
@@ -26,6 +27,9 @@ class Base(db.Model):
     # create_time = Column('create_time', Integer)
     # 记录数据状态,1表示数据存在
     status = Column(SmallInteger, default=1)
+    create_time = Column('create_time', Integer)
+    def __init__(self):
+        self.create_time = int(datetime.now().timestamp())
 
     # 根据表单传入的字典参数来完成数据的自动赋值
     def set_attrs(self, attrs_dict):
