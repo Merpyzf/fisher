@@ -5,8 +5,19 @@
 @contact: merpyzf@qq.com
 @software: PyCharm
 """
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
 from sqlalchemy import Column, Integer, SmallInteger
+from contextlib import contextmanager
+class SQLAlchemy(_SQLAlchemy):
+    @contextmanager
+    def auto_commit(self):
+        try:
+            yield
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            # 抛出异常
+            raise e
 
 db = SQLAlchemy()
 class Base(db.Model):

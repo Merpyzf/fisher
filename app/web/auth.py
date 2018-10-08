@@ -13,12 +13,12 @@ def register():
     form = RegisterForm(request.form)
     # 验证用户提交的表单数据
     if request.method == 'POST' and form.validate():
-        user = User()
-        # form.data获取客户端提交的字典类型的参数
-        user.set_attrs(form.data)
-        # 将数据存储到数据库中
-        db.session.add(user)
-        db.session.commit()
+        with db.auto_commit():
+            user = User()
+            # form.data获取客户端提交的字典类型的参数
+            user.set_attrs(form.data)
+            # 将数据存储到数据库中
+            db.session.add(user)
         return redirect(url_for('web.login'))
     # form.errors 以字典的形式存放表单的验证信息
     # print(form.errors)
