@@ -6,10 +6,17 @@
 @software: PyCharm
 """
 from flask import Flask
+from flask_script import Manager
 from flask_login import LoginManager
 from app.models.base import db
+from flask_migrate import Migrate, MigrateCommand
+
 
 login_manager = LoginManager()
+from app.models.user import User
+from app.models.gift import Gift
+from app.models.wish import Wish
+from app.models.book import Book
 
 def create_app():
     # __name__ 决定了项目的根目录
@@ -26,6 +33,12 @@ def create_app():
     login_manager.login_message = '请先登录或注册'
     # 注册数据库
     db.init_app(app)
+    migrate = Migrate(app, db)
+    manager = Manager(app)
+    manager.add_command('db', MigrateCommand)
+    # 当数据模型修改时需要更新数据库，则取消下面的注释，执行
+    # python fisher.py db upgrade 命令
+    # manager.run()
     with app.app_context():
         # 生成表
         db.create_all()
