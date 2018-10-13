@@ -1,4 +1,4 @@
-from flask import current_app, flash
+from flask import current_app, flash, redirect, url_for
 from flask_login import login_required, current_user
 
 from app import db
@@ -28,6 +28,7 @@ def give_to_gifts(isbn):
             db.session.add(gift)
     else:
         flash('这本书已添加至你的赠送清单或已存于你的心愿清单，请不要重复添加')
+    return redirect(url_for('web.book_detail', isbn=isbn))
 
 @web.route('/gifts/<gid>/redraw')
 def redraw_from_gifts(gid):

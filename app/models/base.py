@@ -37,4 +37,10 @@ class Base(db.Model):
             # 判断当前对象中是否包含名字为key的属性
             if hasattr(self, key) and key != 'id':
                 setattr(self, key, value)
-
+    @property
+    def create_datetime(self):
+        # 将int类型的时间戳转换成datetime类型
+        if self.create_time:
+            return datetime.fromtimestamp(self.create_time)
+        else:
+            return

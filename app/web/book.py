@@ -8,10 +8,14 @@
 import json
 
 from flask import jsonify, request, render_template, flash
+from flask_login import current_user
 
+from app.models.gift import Gift
+from app.models.wish import Wish
 from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
 from app.spider.yushu_book import YuShuBook
+from app.view_models.trade import TradeInfo
 from app.web import web
 from app.view_models.book import BookViewModel, BookCollection
 
@@ -54,6 +58,29 @@ def test():
 
 @web.route('/book/<isbn>/book_detail')
 def book_detail(isbn):
+    # 标记当前展示的书籍是否在赠送清单中
+    has_in_gifts = False
+    # 标记当前展示的书籍是否在心愿清单中
+    has_in_wishes = False
+
+    # 判断是否有用户登录
+    if current_user.is_authenticated:
+        if Gift.query.filter_by(uid = current_user.id,isbn = isbn,launched = False).first():
+            # 此时的图书详情界面上展示索取此本书籍的用户信息
+            has_in_gifts = True
+        if Wish.query.filter_by(uid = current_user.id, isbn = isbn, launched = False).first():
+            # 此时的图书详情界面上展示赠送此本书籍的用户信息
+            has_in_wishes = True
+
+    trade_gifts = Gift.query.filter_by(isbn=isbn, launched = False).all()
+    trade_wishes = Wish.query.filter_by(isbn=isbn, launched = False).all()
+
+    trade_wishes_model = TradeInfo(trade_wishes)
+    trade_gifts_model = TradeInfo(trade_gifts)
+
+    # 取书籍的详情数据
     yushu_book = YuShuBook()
     yushu_book.search_by_isbn(isbn)
-    return render_template("book_detail.html", book=yushu_book.first, wishes=[], gifts=[])
+    book = BookViewModel(yushu_book.first)
+    return render_template("book_detail.html", book=book, wishes=trade_wishes_model,
+                           gifts=trade_gifts_model, has_in_gifts = has_in_gifts, has_in_wishes = has_in_wishes)
