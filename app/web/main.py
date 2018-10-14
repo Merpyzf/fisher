@@ -1,10 +1,16 @@
-from . import web
+from flask import render_template
 
+from app.models.gift import Gift
+from app.view_models.book import BookViewModel
+from . import web
 
 
 @web.route('/')
 def index():
-    return 'This is a index page'
+    recent_gifts = Gift.recent()
+    print(recent_gifts)
+    books = [BookViewModel(gift.book) for gift in recent_gifts]
+    return render_template('index.html', recent=books)
 
 
 @web.route('/personal')
