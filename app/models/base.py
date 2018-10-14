@@ -5,10 +5,12 @@
 @contact: merpyzf@qq.com
 @software: PyCharm
 """
-from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy, BaseQuery
 from sqlalchemy import Column, Integer, SmallInteger
 from contextlib import contextmanager
 from datetime import datetime
+
+
 class SQLAlchemy(_SQLAlchemy):
     @contextmanager
     def auto_commit(self):
@@ -20,7 +22,17 @@ class SQLAlchemy(_SQLAlchemy):
             # 抛出异常
             raise e
 
-db = SQLAlchemy()
+
+class Query(BaseQuery):
+    def filter_by(self, **kwargs):
+        if 'status' not in kwargs.keys():
+            kwargs['status'] = 1
+        return super(Query, self).filter_by(**kwargs)
+
+# 使用自己重写的filter_by方法替换原有的实现，目的解决软删除模式下每次查询数据都要重复加上一个status状态判断
+db = SQLAlchemy(query_class=Query)
+
+
 class Base(db.Model):
     # 添加 __abstract__ = True 标识SQLAlchemy不要创建一个表名为Base的表，如果不添加会提示缺少主键的错误
     __abstract__ = True
@@ -28,6 +40,7 @@ class Base(db.Model):
     # 记录数据状态,1表示数据存在
     status = Column(SmallInteger, default=1)
     create_time = Column('create_time', Integer)
+
     def __init__(self):
         self.create_time = int(datetime.now().timestamp())
 
@@ -37,6 +50,7 @@ class Base(db.Model):
             # 判断当前对象中是否包含名字为key的属性
             if hasattr(self, key) and key != 'id':
                 setattr(self, key, value)
+
     @property
     def create_datetime(self):
         # 将int类型的时间戳转换成datetime类型
