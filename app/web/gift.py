@@ -9,6 +9,15 @@ from . import web
 @web.route('/my/gifts')
 @login_required
 def my_gifts():
+    uid = current_user.id
+    gifts_of_mine = Gift.get_user_gifts(uid)
+    # 从查询出的我的礼物中取出书籍的isbn编号存放到集合中
+    # 列表推导式
+    isbn_list = [gift.isbn for gift in gifts_of_mine]
+    print(isbn_list)
+    count_list = Gift.get_wish_count(isbn_list)
+    print(count_list)
+
     return 'My Gifts'
 
 
@@ -30,9 +39,7 @@ def give_to_gifts(isbn):
         flash('这本书已添加至你的赠送清单或已存于你的心愿清单，请不要重复添加')
     return redirect(url_for('web.book_detail', isbn=isbn))
 
+
 @web.route('/gifts/<gid>/redraw')
 def redraw_from_gifts(gid):
     pass
-
-
-
